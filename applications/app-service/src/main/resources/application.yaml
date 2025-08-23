@@ -22,3 +22,16 @@ management:
         enabled: true
 cors:
   allowed-origins: "http://localhost:4200,http://localhost:8080"
+
+routes:
+  paths:
+    create: "/api/v1/usuarios"
+
+adapters:
+  r2dbc:
+    host: "postgres17_db"
+    port: 5432
+    database: "autenticacion"
+    schema: "public"
+    username: "postgres"
+    password: "postgres"

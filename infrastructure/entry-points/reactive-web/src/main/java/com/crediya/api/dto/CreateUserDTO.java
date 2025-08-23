@@ -10,7 +10,7 @@ public class CreateUserDTO {
     private String id;
 
     @NotBlank(message = "El nombre es obligatorio")
-    private String firstName;
+    private String name;
 
     @NotBlank(message = "El apellido es obligatorio")
     private String lastName;

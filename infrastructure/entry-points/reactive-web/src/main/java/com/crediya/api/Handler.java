@@ -1,7 +1,6 @@
 package com.crediya.api;
 
 import com.crediya.api.dto.CreateUserDTO;
-import com.crediya.api.dto.UserDTO;
 import com.crediya.api.mapper.UserDTOMapper;
 import com.crediya.usecase.user.UserUseCase;
 import lombok.RequiredArgsConstructor;
@@ -24,15 +23,5 @@ public class Handler {
                 .map(userDTOMapper::toResponse)
                 .flatMap(userDTO -> ServerResponse.ok().bodyValue(userDTO))
                 .switchIfEmpty(ServerResponse.badRequest().build());
-    }
-
-    public Mono<ServerResponse> listenGETOtherUseCase(ServerRequest serverRequest) {
-        // useCase2.logic();
-        return ServerResponse.ok().bodyValue("");
-    }
-
-    public Mono<ServerResponse> listenPOSTUseCase(ServerRequest serverRequest) {
-        // useCase.logic();
-        return ServerResponse.ok().bodyValue("");
     }
 }
