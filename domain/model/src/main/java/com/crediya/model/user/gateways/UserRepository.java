@@ -1,8 +1,9 @@
 package com.crediya.model.user.gateways;
 
 import com.crediya.model.user.User;
+import reactor.core.publisher.Mono;
 
 public interface UserRepository {
-    User getUserByEmail(String email);
-    User saveUser(User user);
+    Mono<User> getUserByEmail(String email);
+    Mono<User> saveUser(User user);
 }
