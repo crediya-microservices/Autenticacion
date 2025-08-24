@@ -1,0 +1,53 @@
+services:
+  app:
+    build:
+      context: ..
+      dockerfile: deployment/Dockerfile
+    container_name: autenticacion-app
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres17_db
+    networks:
+      - backend-network
+    environment:
+      SPRING_R2DBC_URL: r2dbc:postgresql://postgres17_db:5432/autenticacion
+      SPRING_R2DBC_USERNAME: postgres
+      SPRING_R2DBC_PASSWORD: postgres
+
+  postgres17_db:
+    image: postgres:17
+    container_name: postgres17_db
+    restart: unless-stopped
+    networks:
+      - backend-network
+    environment:
+      POSTGRES_DB: "autenticacion"
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "postgres"
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres17_db_data:/var/lib/postgresql/data
+
+  pgadmin4:
+    image: elestio/pgadmin:REL-9_6
+    container_name: pgadminREL_9_6_db
+    restart: unless-stopped
+    networks:
+      - backend-network
+    environment:
+      PGADMIN_DEFAULT_EMAIL: "test@test.com"
+      PGADMIN_DEFAULT_PASSWORD: "postgres"
+      PGADMIN_LISTEN_PORT: 8080
+    ports:
+      - "8088:8080"
+    depends_on:
+      - postgres17_db
+
+volumes:
+  postgres17_db_data:
+
+networks:
+  backend-network:
+    driver: bridge
