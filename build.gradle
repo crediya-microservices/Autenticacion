@@ -6,6 +6,8 @@ buildscript {
 		jacocoVersion = '0.8.13'
 		pitestVersion = '1.19.0-rc.1'
         lombokVersion = '1.18.38'
+        mapstructVersion = '1.6.3'
+        jakartaValidationVersion = '3.0.2'
 	}
 }
 
@@ -20,6 +22,13 @@ plugins {
 sonar {
     def modules = subprojects.projectDir.collect { "${it.toString().replace(project.projectDir.toString() + "/", "")}" }
     properties {
+        property "sonar.projectKey", "Autenticacion"
+        property "sonar.projectName", "Autenticacion"
+        property "sonar.projectVersion", "1.0"
+        property "sonar.host.url", "http://localhost:9000"
+        property "sonar.token", "squ_1144ddbef9e3f13f220405ec6fafba8b837a1934"
+        property "sonar.login", "admin"
+        property "sonar.password", "Aa5592770"
         property "sonar.sourceEncoding", "UTF-8"
         property "sonar.modules", "${modules.join(',')}"
         property "sonar.sources", "src,deployment,settings.gradle,main.gradle,build.gradle,${modules.collect { "${it}/build.gradle" }.join(',')}"
@@ -30,7 +39,6 @@ sonar {
         property "sonar.java.coveragePlugin", "jacoco"
         property "sonar.coverage.jacoco.xmlReportPaths", "build/reports/jacocoMergedReport/jacocoMergedReport.xml"
         property "sonar.pitest.reportPaths", "build/reports/pitest/mutations.xml"
-        property "sonar.externalIssuesReportPaths", "build/issues.json"
     }
 }
 
