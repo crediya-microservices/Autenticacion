@@ -1,20 +1,37 @@
 package com.crediya.r2dbc.entity;
 
-import jakarta.persistence.*;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Table;
+import org.springframework.data.relational.core.mapping.Column;
 import lombok.Data;
 
-@Entity
-@Table(name = "users")
+import java.math.BigDecimal;
+import java.time.LocalDate;
+
 @Data
+@Table("users")
 public class UserEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private String id;
+    private Long id;
+
+    @Column("name")
     private String name;
+
+    @Column("last_name")
     private String lastName;
+
+    @Column("email")
     private String email;
-    private String bornDate;
+
+    @Column("born_date")
+    private LocalDate bornDate;
+
+    @Column("address")
     private String address;
+
+    @Column("phone_number")
     private String phoneNumber;
-    private String baseSalary;
+
+    @Column("base_salary")
+    private BigDecimal baseSalary;
 }

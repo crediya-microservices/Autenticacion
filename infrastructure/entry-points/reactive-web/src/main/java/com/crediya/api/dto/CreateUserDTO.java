@@ -4,6 +4,7 @@ import jakarta.validation.constraints.*;
 import lombok.Data;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 
 @Data
 public class CreateUserDTO {
@@ -19,7 +20,7 @@ public class CreateUserDTO {
     @Email(message = "El correo electrónico no tiene un formato válido")
     private String email;
 
-    private String bornDate;
+    private LocalDate bornDate;
     private String address;
     private String phoneNumber;
 

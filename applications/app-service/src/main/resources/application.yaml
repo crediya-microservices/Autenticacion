@@ -3,14 +3,6 @@ server:
 spring:
   application:
     name: "Autenticacion"
-  r2dbc:
-    url: r2dbc:postgresql://postgres17_db:5432/autenticacion
-    username: postgres
-    password: postgres
-    pool:
-      initial-size: 1
-      max-size: 5
-      validation-query-timeout: 5s
   devtools:
     add-properties: false
   h2:
@@ -38,7 +30,7 @@ routes:
 
 adapters:
   r2dbc:
-    host: "postgres17_db"
+    host: "localhost"
     port: 5432
     database: "autenticacion"
     schema: "public"

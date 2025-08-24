@@ -3,14 +3,17 @@ package com.crediya.model.user;
 
 import lombok.Data;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
+
 @Data
 public class User {
     private String id;
     private String name;
     private String lastName;
     private String email;
-    private String bornDate;
+    private LocalDate bornDate;
     private String address;
     private String phoneNumber;
-    private String baseSalary;
+    private BigDecimal baseSalary;
 }

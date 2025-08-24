@@ -6,6 +6,8 @@ import com.crediya.model.user.gateways.UserRepository;
 import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Mono;
 
+import java.math.BigDecimal;
+
 @RequiredArgsConstructor
 public class UserUseCase {
 
@@ -39,9 +41,9 @@ public class UserUseCase {
         return email != null && email.matches(emailRegex);
     }
 
-    private Boolean isValidSalary(String baseSalary) {
+    private Boolean isValidSalary(BigDecimal baseSalary) {
         try {
-            double salary = Double.parseDouble(baseSalary);
+            double salary = Double.parseDouble(String.valueOf(baseSalary));
             return salary < 0 || salary > 15000000;
         } catch (NumberFormatException e) {
             return false;

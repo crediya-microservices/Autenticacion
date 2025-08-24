@@ -3,7 +3,7 @@ EXTENSION IF NOT EXISTS "pgcrypto";
 
 CREATE TABLE users
 (
-    id           BIGSERIAL PRIMARY KEY,
+    id           SERIAL PRIMARY KEY,
     name         VARCHAR(100)        NOT NULL,
     last_name    VARCHAR(100)        NOT NULL,
     email        VARCHAR(150) UNIQUE NOT NULL,
