@@ -10,18 +10,18 @@ public abstract class BaseHandler {
 
    protected <T> Mono<ServerResponse> ok(String message, T body) {
        log.debug("Respuesta OK: {} - {}", message, body);
-       ApiResponse<T> response = new ApiResponse<>(message, body);
+       LocalApiResponse<T> response = new LocalApiResponse<>(message, body);
        return ServerResponse.ok().bodyValue(response);
    }
 
     protected <T> Mono<ServerResponse> ok(String message) {
-        ApiResponse<T> response = new ApiResponse<>(message);
+        LocalApiResponse<T> response = new LocalApiResponse<>(message);
         return ServerResponse.ok().bodyValue(response);
     }
 
     protected <T> Mono<ServerResponse> created(String message,T body) {
         log.debug("Recurso creado: {}", body);
-        ApiResponse<T> response = new ApiResponse<>(message, body);
+        LocalApiResponse<T> response = new LocalApiResponse<>(message, body);
         return ServerResponse.status(HttpStatus.CREATED).bodyValue(response);
     }
 

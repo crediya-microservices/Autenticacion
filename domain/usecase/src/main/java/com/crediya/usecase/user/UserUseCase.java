@@ -12,7 +12,7 @@ import java.math.BigDecimal;
 @RequiredArgsConstructor
 public class UserUseCase implements UserInputPort {
 
-private final UserRepository userRepository;
+    private final UserRepository userRepository;
 
     public Mono<User> saveUser(User user) {
         if (!isCompleteFields(user)) {
@@ -32,17 +32,17 @@ private final UserRepository userRepository;
                 });
     }
 
-    private Boolean isCompleteFields(User user) {
+    private boolean isCompleteFields(User user) {
         return user.getName() != null && user.getLastName() != null && user.getEmail() != null &&
                 user.getBaseSalary() != null;
     }
 
-    private Boolean isValidEmail(String email) {
+    private boolean isValidEmail(String email) {
         String emailRegex = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
         return email != null && email.matches(emailRegex);
     }
 
-    private Boolean isValidSalary(BigDecimal baseSalary) {
+    private boolean isValidSalary(BigDecimal baseSalary) {
         try {
             double salary = Double.parseDouble(String.valueOf(baseSalary));
             return salary < 0 || salary > 15000000;

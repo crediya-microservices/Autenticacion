@@ -1,15 +1,15 @@
 package com.crediya.api;
 
-public class ApiResponse<T> {
+public class LocalApiResponse<T> {
     private String message;
     private T content;
 
-    public ApiResponse(String message, T content) {
+    public LocalApiResponse(String message, T content) {
         this.message = message;
         this.content = content;
     }
 
-    public ApiResponse(String message) {
+    public LocalApiResponse(String message) {
         this.message = message;
     }
 
