@@ -2,6 +2,7 @@ package com.crediya.usecase.user;
 
 
 import com.crediya.model.user.User;
+import com.crediya.model.user.gateways.UserInputPort;
 import com.crediya.model.user.gateways.UserRepository;
 import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Mono;
@@ -9,9 +10,9 @@ import reactor.core.publisher.Mono;
 import java.math.BigDecimal;
 
 @RequiredArgsConstructor
-public class UserUseCase {
+public class UserUseCase implements UserInputPort {
 
-    private final UserRepository userRepository;
+private final UserRepository userRepository;
 
     public Mono<User> saveUser(User user) {
         if (!isCompleteFields(user)) {
