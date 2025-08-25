@@ -19,12 +19,13 @@ public class Handler extends BaseHandler {
 
     private final UserInputPort userInputPort;
     private final UserDTOMapper userDTOMapper;
+    private  final String PAYLOAD = "Payload recibido: {}";
 
     public Mono<ServerResponse> listenSaveUser(ServerRequest serverRequest) {
         log.debug("Recibiendo petición para crear usuario");
 
         return serverRequest.bodyToMono(CreateUserDTO.class)
-                .doOnNext(dto -> log.debug("Payload recibido: {}", dto))
+                .doOnNext(dto -> log.debug(PAYLOAD, dto))
                 .map(userDTOMapper::toModel)
                 .flatMap(userInputPort::saveUser)
                 .map(userDTOMapper::toResponse)
@@ -44,7 +45,7 @@ public class Handler extends BaseHandler {
         log.debug("Recibiendo petición para actualizar usuario");
 
         return serverRequest.bodyToMono(CreateUserDTO.class)
-                .doOnNext(dto -> log.debug("Payload recibido: {}", dto))
+                .doOnNext(dto -> log.debug(PAYLOAD, dto))
                 .map(userDTOMapper::toModel)
                 .flatMap(userInputPort::updateUser)
                 .map(userDTOMapper::toResponse)

@@ -13,18 +13,25 @@ import reactor.core.publisher.Mono;
 import java.util.Objects;
 
 @Repository
-public class MyReactiveRepositoryAdapter extends ReactiveAdapterOperations<
+public class UserReactiveRepositoryAdapter extends ReactiveAdapterOperations<
         User,
         UserEntity,
         String,
-        MyReactiveRepository
+        UserReactiveRepository
         > implements UserRepository {
 
     private final TransactionalOperator transactionalOperator;
+    private final RoleReactiveRepository roleRepository;
 
-    public MyReactiveRepositoryAdapter(MyReactiveRepository repository, ObjectMapper mapper, TransactionalOperator transactionalOperator) {
+    public UserReactiveRepositoryAdapter(
+            UserReactiveRepository repository,
+            RoleReactiveRepository roleRepository,
+            ObjectMapper mapper,
+            TransactionalOperator transactionalOperator
+    ) {
         super(repository, mapper, d -> mapper.map(d, User.class));
         this.transactionalOperator = transactionalOperator;
+        this.roleRepository = roleRepository;
     }
 
     @Override
@@ -36,9 +43,15 @@ public class MyReactiveRepositoryAdapter extends ReactiveAdapterOperations<
     }
 
     @Override
-    public Mono<User> saveUser(User user) {
-        return this.repository.save(mapper.map(user, UserEntity.class))
-                .map(entity -> mapper.map(entity, User.class))
+    public Mono<User> saveUser(User user, Long roleId) {
+        UserEntity entity = mapper.map(user, UserEntity.class);
+        entity.setRoleId(roleId);
+        return this.repository.save(entity)
+                .map(saved -> {
+                    user.setId(String.valueOf(saved.getId()));
+                    user.setRoleName(user.getRoleName());
+                    return user;
+                })
                 .onErrorMap(e -> new RuntimeException("Error al guardar usuario", e))
                 .as(transactionalOperator::transactional);
     }
@@ -46,12 +59,19 @@ public class MyReactiveRepositoryAdapter extends ReactiveAdapterOperations<
     @Override
     public Flux<User> getAllUsers() {
         return this.repository.findAll()
-                .map(entity -> mapper.map(entity, User.class))
+                .flatMap(entity ->
+                        roleRepository.findById(String.valueOf(entity.getRoleId()))
+                                .map(role -> {
+                                    User user = mapper.map(entity, User.class);
+                                    user.setRoleName(role.getName());
+                                    return user;
+                                })
+                )
                 .onErrorMap(e -> new RuntimeException("Error al consultar todos los usuarios", e));
     }
 
     @Override
-    public Mono<User> updateUser(User user) {
+    public Mono<User> updateUser(User user, Long roleId) {
         return this.repository.findByEmail(user.getEmail())
                 .switchIfEmpty(Mono.error(new IllegalArgumentException("Usuario no encontrado, por favor verifique el email")))
                 .flatMap(existingUser -> {
@@ -59,9 +79,18 @@ public class MyReactiveRepositoryAdapter extends ReactiveAdapterOperations<
                     existingUser.setLastName(user.getLastName());
                     existingUser.setEmail(user.getEmail());
                     existingUser.setBaseSalary(user.getBaseSalary());
+                    existingUser.setIdentityDocument(user.getIdentityDocument());
+                    existingUser.setRoleId(roleId);
                     return this.repository.save(existingUser);
                 })
-                .map(entity -> mapper.map(entity, User.class))
+                .flatMap(saved ->
+                        roleRepository.findById(String.valueOf(saved.getRoleId()))
+                                .map(role -> {
+                                    User updated = mapper.map(saved, User.class);
+                                    updated.setRoleName(role.getName());
+                                    return updated;
+                                })
+                )
                 .onErrorMap(e -> e instanceof IllegalArgumentException ? e : new RuntimeException("Error al actualizar usuario", e))
                 .as(transactionalOperator::transactional);
     }

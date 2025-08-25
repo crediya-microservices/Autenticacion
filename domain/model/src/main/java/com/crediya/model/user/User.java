@@ -16,4 +16,6 @@ public class User {
     private String address;
     private String phoneNumber;
     private BigDecimal baseSalary;
+    private String identityDocument;
+    private String roleName;
 }
