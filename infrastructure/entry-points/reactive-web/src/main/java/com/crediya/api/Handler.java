@@ -3,6 +3,7 @@ package com.crediya.api;
 
 import com.crediya.api.dto.CreateUserDTO;
 import com.crediya.api.mapper.UserDTOMapper;
+import com.crediya.library.api.BaseHandler;
 import com.crediya.model.user.gateways.UserInputPort;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
