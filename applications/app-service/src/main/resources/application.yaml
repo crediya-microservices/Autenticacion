@@ -27,6 +27,7 @@ cors:
 routes:
   paths:
     users: "/api/v1/usuarios"
+    userByIdentityDocument: "/api/v1/usuarios/{identityDocument}"
 
 adapters:
   r2dbc:

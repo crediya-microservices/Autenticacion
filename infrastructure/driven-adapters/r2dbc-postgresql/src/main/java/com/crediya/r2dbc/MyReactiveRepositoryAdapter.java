@@ -99,7 +99,6 @@ public class MyReactiveRepositoryAdapter extends ReactiveAdapterOperations<
     public Mono<User> findByIdentityDocument(String identityDocument) {
         return this.repository.findByIdentityDocument(identityDocument)
                 .filter(Objects::nonNull)
-                .map(entity -> mapper.map(entity, User.class))
-                .onErrorMap(e -> new RuntimeException("Error al consultar usuario por identificación", e));
+                .map(entity -> mapper.map(entity, User.class));
     }
 }

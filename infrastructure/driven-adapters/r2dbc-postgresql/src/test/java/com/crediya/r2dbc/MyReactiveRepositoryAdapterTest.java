@@ -50,11 +50,10 @@ class MyReactiveRepositoryAdapterTest {
         role.setId(1L);
         role.setName("ADMIN");
 
-        User user = User.builder()
-                .id("1")
-                .email("test@email.com")
-                .roleName("ADMIN")
-                .build();
+        User user = new User();
+        user.setId("1");
+        user.setEmail("test@email.com");
+        user.setRoleName("ADMIN");
 
         when(repository.findByEmail("test@email.com")).thenReturn(Mono.just(userEntity));
         lenient().when(roleRepository.findById(String.valueOf(1L))).thenReturn(Mono.just(role));
@@ -70,10 +69,9 @@ class MyReactiveRepositoryAdapterTest {
 
     @Test
     void mustSaveUser() {
-        User user = User.builder()
-                .email("test@email.com")
-                .roleName("ADMIN")
-                .build();
+        User user = new User();
+        user.setEmail("test@email.com");
+        user.setRoleName("ADMIN");
 
         UserEntity userEntity = new UserEntity();
         userEntity.setId(1L);
@@ -117,17 +115,15 @@ class MyReactiveRepositoryAdapterTest {
         role2.setId(2L);
         role2.setName("USER");
 
-        User user1 = User.builder()
-                .id("1")
-                .email("a@test.com")
-                .roleName("ADMIN")
-                .build();
+        User user1 = new User();
+        user1.setId("1");
+        user1.setEmail("a@test.com");
+        user1.setRoleName("ADMIN");
 
-        User user2 = User.builder()
-                .id("2")
-                .email("b@test.com")
-                .roleName("USER")
-                .build();
+        User user2 = new User();
+        user2.setId("2");
+        user2.setEmail("b@test.com");
+        user2.setRoleName("USER");
 
         when(repository.findAll()).thenReturn(Flux.fromIterable(Arrays.asList(entity1, entity2)));
         when(roleRepository.findById(String.valueOf(1L))).thenReturn(Mono.just(role1));
@@ -143,13 +139,12 @@ class MyReactiveRepositoryAdapterTest {
 
     @Test
     void mustUpdateUser() {
-        User updated = User.builder()
-                .email("update@test.com")
-                .name("Updated")
-                .lastName("User")
-                .baseSalary(new BigDecimal("5000"))
-                .roleName("ADMIN")
-                .build();
+        User updated = new User();
+        updated.setEmail("update@test.com");
+        updated.setName("Updated");
+        updated.setLastName("User");
+        updated.setBaseSalary(new BigDecimal("5000"));
+        updated.setRoleName("ADMIN");
 
         UserEntity existingEntity = new UserEntity();
         existingEntity.setId(1L);
@@ -180,9 +175,8 @@ class MyReactiveRepositoryAdapterTest {
 
     @Test
     void mustFailUpdateUserIfNotFound() {
-        User updated = User.builder()
-                .email("notfound@test.com")
-                .build();
+        User updated = new User();
+        updated.setEmail("notfound@test.com");
 
         when(repository.findByEmail("notfound@test.com")).thenReturn(Mono.empty());
         when(transactionalOperator.transactional(any(Mono.class))).thenAnswer(invocation -> invocation.getArgument(0));

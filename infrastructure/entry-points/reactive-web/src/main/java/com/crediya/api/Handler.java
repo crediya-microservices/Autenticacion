@@ -12,6 +12,8 @@ import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Mono;
 
+import static org.springframework.http.ResponseEntity.notFound;
+
 @Slf4j
 @Component
 @RequiredArgsConstructor
@@ -49,5 +51,14 @@ public class Handler extends BaseHandler {
                 .flatMap(userInputPort::updateUser)
                 .map(userDTOMapper::toResponse)
                 .flatMap(userResponse -> ok("Usuario actualizado exitosamente", userResponse));
+    }
+
+    public Mono<ServerResponse> listenFindByIdentityDocument(ServerRequest serverRequest) {
+        String identityDocument = serverRequest.pathVariable("identityDocument");
+        log.debug("Recibiendo petición para buscar usuario por documento de identidad: {}", identityDocument);
+
+        return userInputPort.findByIdentityDocument(identityDocument)
+                .map(userDTOMapper::toResponse)
+                .flatMap(userResponse -> ok("Usuario encontrado exitosamente", userResponse));
     }
 }

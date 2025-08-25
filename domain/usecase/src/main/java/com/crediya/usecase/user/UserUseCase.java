@@ -59,6 +59,12 @@ public class UserUseCase implements UserInputPort {
                 .onErrorResume(e -> Flux.empty());
     }
 
+    @Override
+    public Mono<User> findByIdentityDocument(String identityDocument) {
+        return userRepository.findByIdentityDocument(identityDocument)
+                .switchIfEmpty(Mono.error(new IllegalArgumentException("Usuario no encontrado")));
+    }
+
     private Mono<Void> validateUser(User user) {
         if (!isCompleteFields(user)) {
             return Mono.error(new IllegalArgumentException("Todos los campos son obligatorios"));

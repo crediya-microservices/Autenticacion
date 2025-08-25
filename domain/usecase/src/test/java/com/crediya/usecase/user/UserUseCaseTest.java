@@ -1,6 +1,5 @@
 package com.crediya.usecase.user;
 
-import com.crediya.model.role.Role;
 import com.crediya.model.role.gateways.RoleRepository;
 import com.crediya.model.user.User;
 import com.crediya.model.user.gateways.UserRepository;
@@ -14,8 +13,8 @@ import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 
-import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -29,14 +28,18 @@ class UserUseCaseTest {
 
     private UserUseCase userUseCase;
 
-    private final User validUser = User.builder()
-            .name("Andres")
-            .lastName("Gomez")
-            .email("andres@example.com")
-            .baseSalary(BigDecimal.valueOf(5_000_000))
-            .identityDocument("123456789")
-            .roleName("ADMIN")
-            .build();
+   private final User validUser = new User(
+       "1",
+       "Andres",
+       "Gomez",
+       "andres@example.com",
+       LocalDate.of(1990, 1, 1),
+       "Calle 123",
+       "123456789",
+       BigDecimal.valueOf(5_000_000),
+       "123456789",
+       "ADMIN"
+   );
 
     @BeforeEach
     void setUp() {
