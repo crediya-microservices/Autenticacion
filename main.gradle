@@ -48,7 +48,6 @@ subprojects {
         testCompileOnly  "org.projectlombok:lombok:${lombokVersion}"
         testAnnotationProcessor  "org.projectlombok:lombok:${lombokVersion}"
         implementation platform("org.springframework.boot:spring-boot-dependencies:${springBootVersion}")
-        implementation 'com.crediya:library:0.0.2'
     }
 
     tasks.withType(Test).configureEach {

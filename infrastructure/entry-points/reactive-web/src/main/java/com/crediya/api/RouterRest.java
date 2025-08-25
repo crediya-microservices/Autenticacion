@@ -171,6 +171,7 @@ public class RouterRest {
     public RouterFunction<ServerResponse> routerFunction() {
         return route(POST(userPath.getUsers()), userHandler::listenSaveUser)
                 .andRoute(GET(userPath.getUsers()), userHandler::listenGetAllUsers)
-                .andRoute(PUT(userPath.getUsers()), userHandler::listenUpdateUser);
+                .andRoute(PUT(userPath.getUsers()), userHandler::listenUpdateUser)
+                .andRoute(GET(userPath.getUserByIdentityDocument()), userHandler::listenFindByIdentityDocument);
     }
 }

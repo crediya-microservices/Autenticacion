@@ -28,4 +28,10 @@ public class CreateUserDTO {
     @DecimalMin(value = "0", inclusive = true, message = "El salario base debe ser mayor o igual a 0")
     @DecimalMax(value = "15000000", inclusive = true, message = "El salario base debe ser menor o igual a 15,000,000")
     private BigDecimal baseSalary;
+
+    @NotBlank(message = "El documento de identidad es obligatorio")
+    private String identityDocument;
+
+    @NotBlank(message = "El rol es obligatorio")
+    private String roleName;
 }

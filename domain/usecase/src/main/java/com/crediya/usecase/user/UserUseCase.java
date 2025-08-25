@@ -1,6 +1,7 @@
 package com.crediya.usecase.user;
 
 
+import com.crediya.model.role.gateways.RoleRepository;
 import com.crediya.model.user.User;
 import com.crediya.model.user.gateways.UserInputPort;
 import com.crediya.model.user.gateways.UserRepository;
@@ -14,14 +15,29 @@ import java.math.BigDecimal;
 public class UserUseCase implements UserInputPort {
 
     private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
 
     public Mono<User> saveUser(User user) {
         return validateUser(user)
                 .then(userRepository.getUserByEmail(user.getEmail())
                         .hasElement()
-                        .flatMap(exists -> {
-                            if (exists) return Mono.error(new IllegalStateException("El correo ya está registrado"));
-                            return userRepository.saveUser(user);
+                        .flatMap(emailExists -> {
+                            if (emailExists) {
+                                return Mono.error(new IllegalStateException("El correo ya está registrado"));
+                            }
+                            return userRepository.findByIdentityDocument(user.getIdentityDocument())
+                                    .hasElement()
+                                    .flatMap(docExists -> {
+                                        if (docExists) {
+                                            return Mono.error(new IllegalStateException("El documento de identidad ya está registrado"));
+                                        }
+                                        return roleRepository.getRoleByName(user.getRoleName())
+                                                .switchIfEmpty(Mono.error(new IllegalArgumentException("El rol no existe")))
+                                                .flatMap(role -> {
+                                                    user.setRoleName(role.getName());
+                                                    return userRepository.saveUser(user, role.getId());
+                                                });
+                                    });
                         })
                 );
     }
@@ -29,17 +45,24 @@ public class UserUseCase implements UserInputPort {
     @Override
     public Mono<User> updateUser(User user) {
         return validateUser(user)
-                .then(userRepository.updateUser(user)
-                        .switchIfEmpty(Mono.error(new IllegalArgumentException("Usuario no encontrado")))
+                .then(roleRepository.getRoleByName(user.getRoleName())
+                        .switchIfEmpty(Mono.error(new IllegalArgumentException("El rol no existe")))
+                        .flatMap(role -> userRepository.updateUser(user, role.getId())
+                                .switchIfEmpty(Mono.error(new IllegalArgumentException("Usuario no encontrado")))
+                        )
                 );
     }
 
     @Override
     public Flux<User> getAllUsers() {
         return userRepository.getAllUsers()
-                .onErrorResume(e -> {
-                    return Flux.empty();
-                });
+                .onErrorResume(e -> Flux.empty());
+    }
+
+    @Override
+    public Mono<User> findByIdentityDocument(String identityDocument) {
+        return userRepository.findByIdentityDocument(identityDocument)
+                .switchIfEmpty(Mono.error(new IllegalArgumentException("Usuario no encontrado")));
     }
 
     private Mono<Void> validateUser(User user) {
@@ -57,7 +80,7 @@ public class UserUseCase implements UserInputPort {
 
     private boolean isCompleteFields(User user) {
         return user.getName() != null && user.getLastName() != null && user.getEmail() != null &&
-                user.getBaseSalary() != null;
+                user.getBaseSalary() != null && user.getIdentityDocument() != null && user.getRoleName() != null;
     }
 
     private boolean isValidEmail(String email) {
