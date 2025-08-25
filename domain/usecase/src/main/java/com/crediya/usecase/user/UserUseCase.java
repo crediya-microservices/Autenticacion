@@ -5,6 +5,7 @@ import com.crediya.model.user.User;
 import com.crediya.model.user.gateways.UserInputPort;
 import com.crediya.model.user.gateways.UserRepository;
 import lombok.RequiredArgsConstructor;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.math.BigDecimal;
@@ -15,6 +16,33 @@ public class UserUseCase implements UserInputPort {
     private final UserRepository userRepository;
 
     public Mono<User> saveUser(User user) {
+        return validateUser(user)
+                .then(userRepository.getUserByEmail(user.getEmail())
+                        .hasElement()
+                        .flatMap(exists -> {
+                            if (exists) return Mono.error(new IllegalStateException("El correo ya está registrado"));
+                            return userRepository.saveUser(user);
+                        })
+                );
+    }
+
+    @Override
+    public Mono<User> updateUser(User user) {
+        return validateUser(user)
+                .then(userRepository.updateUser(user)
+                        .switchIfEmpty(Mono.error(new IllegalArgumentException("Usuario no encontrado")))
+                );
+    }
+
+    @Override
+    public Flux<User> getAllUsers() {
+        return userRepository.getAllUsers()
+                .onErrorResume(e -> {
+                    return Flux.empty();
+                });
+    }
+
+    private Mono<Void> validateUser(User user) {
         if (!isCompleteFields(user)) {
             return Mono.error(new IllegalArgumentException("Todos los campos son obligatorios"));
         }
@@ -24,12 +52,7 @@ public class UserUseCase implements UserInputPort {
         if (isValidSalary(user.getBaseSalary())) {
             return Mono.error(new IllegalArgumentException("El salario base debe estar entre 0 y 15,000,000"));
         }
-        return userRepository.getUserByEmail(user.getEmail())
-                .hasElement()
-                .flatMap(exists -> {
-                    if (exists) return Mono.error(new IllegalStateException("El correo ya está registrado"));
-                    return userRepository.saveUser(user);
-                });
+        return Mono.empty();
     }
 
     private boolean isCompleteFields(User user) {
