@@ -57,45 +57,6 @@ public class MyReactiveRepositoryAdapter extends ReactiveAdapterOperations<
     }
 
     @Override
-    public Flux<User> getAllUsers() {
-        return this.repository.findAll()
-                .flatMap(entity ->
-                        roleRepository.findById(String.valueOf(entity.getRoleId()))
-                                .map(role -> {
-                                    User user = mapper.map(entity, User.class);
-                                    user.setRoleName(role.getName());
-                                    return user;
-                                })
-                )
-                .onErrorMap(e -> new RuntimeException("Error al consultar todos los usuarios", e));
-    }
-
-    @Override
-    public Mono<User> updateUser(User user, Long roleId) {
-        return this.repository.findByEmail(user.getEmail())
-                .switchIfEmpty(Mono.error(new IllegalArgumentException("Usuario no encontrado, por favor verifique el email")))
-                .flatMap(existingUser -> {
-                    existingUser.setName(user.getName());
-                    existingUser.setLastName(user.getLastName());
-                    existingUser.setEmail(user.getEmail());
-                    existingUser.setBaseSalary(user.getBaseSalary());
-                    existingUser.setIdentityDocument(user.getIdentityDocument());
-                    existingUser.setRoleId(roleId);
-                    return this.repository.save(existingUser);
-                })
-                .flatMap(saved ->
-                        roleRepository.findById(String.valueOf(saved.getRoleId()))
-                                .map(role -> {
-                                    User updated = mapper.map(saved, User.class);
-                                    updated.setRoleName(role.getName());
-                                    return updated;
-                                })
-                )
-                .onErrorMap(e -> e instanceof IllegalArgumentException ? e : new RuntimeException("Error al actualizar usuario", e))
-                .as(transactionalOperator::transactional);
-    }
-
-    @Override
     public Mono<User> findByIdentityDocument(String identityDocument) {
         return this.repository.findByIdentityDocument(identityDocument)
                 .filter(Objects::nonNull)

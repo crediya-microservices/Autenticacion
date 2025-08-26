@@ -81,97 +81,10 @@ public class RouterRest {
                                     )
                             }
                     )
-            ),
-            @RouterOperation(
-                    path = "/api/v1/usuarios",
-                    produces = {"application/json"},
-                    method = org.springframework.web.bind.annotation.RequestMethod.GET,
-                    beanClass = Handler.class,
-                    beanMethod = "listenGetAllUsers",
-                    operation = @Operation(
-                            operationId = "getAllUsers",
-                            summary = "Obtener todos los usuarios",
-                            description = "Devuelve la lista de todos los usuarios registrados",
-                            responses = {
-                                    @ApiResponse(
-                                            responseCode = "200",
-                                            description = "Lista de usuarios obtenida exitosamente",
-                                            content = @Content(
-                                                    array = @ArraySchema(schema = @Schema(implementation = CreateUserDTO.class))
-                                            )
-                                    ),
-                                    @ApiResponse(
-                                            responseCode = "500",
-                                            description = "Error interno del servidor",
-                                            content = @Content(schema = @Schema(example = """
-                                                    {
-                                                      "status": 500,
-                                                      "error": "Internal Server Error",
-                                                      "message": "Ocurrió un error inesperado",
-                                                      "path":  "/api/v1/usuarios"
-                                                    }
-                                                    """))
-                                    )
-                            }
-                    )
-            ),
-            @RouterOperation(
-                    path = "/api/v1/usuarios",
-                    produces = {"application/json"},
-                    method = org.springframework.web.bind.annotation.RequestMethod.PUT,
-                    beanClass = Handler.class,
-                    beanMethod = "listenUpdateUser",
-                    operation = @Operation(
-                            operationId = "updateUser",
-                            summary = "Actualizar usuario",
-                            description = "Actualiza la información de un usuario existente",
-                            requestBody = @RequestBody(
-                                    required = true,
-                                    description = "Datos actualizados del usuario",
-                                    content = @Content(
-                                            schema = @Schema(implementation = CreateUserDTO.class)
-                                    )
-                            ),
-                            responses = {
-                                    @ApiResponse(
-                                            responseCode = "200",
-                                            description = "Usuario actualizado exitosamente",
-                                            content = @Content(
-                                                    schema = @Schema(implementation = CreateUserDTO.class)
-                                            )
-                                    ),
-                                    @ApiResponse(
-                                            responseCode = "400",
-                                            description = "Error de validación en los datos enviados",
-                                            content = @Content(schema = @Schema(example = """
-                                                    {
-                                                      "status": 400,
-                                                      "error": "Bad Request",
-                                                      "message": "Datos inválidos",
-                                                      "path":  "/api/v1/usuarios"
-                                                    }
-                                                    """))
-                                    ),
-                                    @ApiResponse(
-                                            responseCode = "500",
-                                            description = "Error interno del servidor",
-                                            content = @Content(schema = @Schema(example = """
-                                                    {
-                                                      "status": 500,
-                                                      "error": "Internal Server Error",
-                                                      "message": "Ocurrió un error inesperado",
-                                                      "path":  "/api/v1/usuarios"
-                                                    }
-                                                    """))
-                                    )
-                            }
-                    )
             )
     })
     public RouterFunction<ServerResponse> routerFunction() {
         return route(POST(userPath.getUsers()), userHandler::listenSaveUser)
-                .andRoute(GET(userPath.getUsers()), userHandler::listenGetAllUsers)
-                .andRoute(PUT(userPath.getUsers()), userHandler::listenUpdateUser)
                 .andRoute(GET(userPath.getUserByIdentityDocument()), userHandler::listenFindByIdentityDocument);
     }
 }
