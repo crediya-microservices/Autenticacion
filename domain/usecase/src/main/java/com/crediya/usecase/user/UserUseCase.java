@@ -6,7 +6,6 @@ import com.crediya.model.user.User;
 import com.crediya.model.user.gateways.UserInputPort;
 import com.crediya.model.user.gateways.UserRepository;
 import lombok.RequiredArgsConstructor;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.math.BigDecimal;
@@ -40,23 +39,6 @@ public class UserUseCase implements UserInputPort {
                                     });
                         })
                 );
-    }
-
-    @Override
-    public Mono<User> updateUser(User user) {
-        return validateUser(user)
-                .then(roleRepository.getRoleByName(user.getRoleName())
-                        .switchIfEmpty(Mono.error(new IllegalArgumentException("El rol no existe")))
-                        .flatMap(role -> userRepository.updateUser(user, role.getId())
-                                .switchIfEmpty(Mono.error(new IllegalArgumentException("Usuario no encontrado")))
-                        )
-                );
-    }
-
-    @Override
-    public Flux<User> getAllUsers() {
-        return userRepository.getAllUsers()
-                .onErrorResume(e -> Flux.empty());
     }
 
     @Override

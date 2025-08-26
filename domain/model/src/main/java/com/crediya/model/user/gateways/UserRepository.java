@@ -7,7 +7,5 @@ import reactor.core.publisher.Mono;
 public interface UserRepository {
     Mono<User> getUserByEmail(String email);
     Mono<User> saveUser(User user, Long roleId);
-    Flux<User> getAllUsers();
-    Mono<User> updateUser(User user, Long roleI);
     Mono<User> findByIdentityDocument (String identityDocument);
 }

@@ -33,26 +33,6 @@ public class Handler extends BaseHandler {
                 .flatMap(userResponse -> created("Usuario creado exitosamente", userResponse));
     }
 
-    public Mono<ServerResponse> listenGetAllUsers(ServerRequest serverRequest) {
-        log.debug("Recibiendo petición para obtener todos los usuarios");
-
-        return userInputPort.getAllUsers()
-                .map(userDTOMapper::toResponse)
-                .collectList()
-                .flatMap(userResponses -> ok("Usuarios obtenidos exitosamente", userResponses));
-    }
-
-    public Mono<ServerResponse> listenUpdateUser(ServerRequest serverRequest) {
-        log.debug("Recibiendo petición para actualizar usuario");
-
-        return serverRequest.bodyToMono(CreateUserDTO.class)
-                .doOnNext(dto -> log.debug("Payload recibido: {}", dto))
-                .map(userDTOMapper::toModel)
-                .flatMap(userInputPort::updateUser)
-                .map(userDTOMapper::toResponse)
-                .flatMap(userResponse -> ok("Usuario actualizado exitosamente", userResponse));
-    }
-
     public Mono<ServerResponse> listenFindByIdentityDocument(ServerRequest serverRequest) {
         String identityDocument = serverRequest.pathVariable("identityDocument");
         log.debug("Recibiendo petición para buscar usuario por documento de identidad: {}", identityDocument);
