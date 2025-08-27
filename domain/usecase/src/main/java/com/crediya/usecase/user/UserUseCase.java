@@ -42,8 +42,8 @@ public class UserUseCase implements UserInputPort {
     }
 
     @Override
-    public Mono<User> findByIdentityDocument(String identityDocument) {
-        return userRepository.findByIdentityDocument(identityDocument)
+    public Mono<User> findByEmail(String email) {
+        return userRepository.getUserByEmail(email)
                 .switchIfEmpty(Mono.error(new IllegalArgumentException("Usuario no encontrado")));
     }
 

@@ -6,5 +6,5 @@ import reactor.core.publisher.Mono;
 
 public interface UserInputPort {
     Mono<User> saveUser(User user);
-    Mono<User> findByIdentityDocument (String identityDocument);
+    Mono<User> findByEmail (String email);
 }

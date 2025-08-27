@@ -38,7 +38,14 @@ public class MyReactiveRepositoryAdapter extends ReactiveAdapterOperations<
     public Mono<User> getUserByEmail(String email) {
         return this.repository.findByEmail(email)
                 .filter(Objects::nonNull)
-                .map(entity -> mapper.map(entity, User.class))
+                .flatMap(entity ->
+                        roleRepository.findById(String.valueOf(entity.getRoleId()))
+                                .map(roleEntity -> {
+                                    User user = mapper.map(entity, User.class);
+                                    user.setRoleName(roleEntity.getName());
+                                    return user;
+                                })
+                )
                 .onErrorMap(e -> new RuntimeException("Error al consultar usuario por email", e));
     }
 

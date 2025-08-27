@@ -181,23 +181,4 @@ class UserUseCaseTest {
                         e.getMessage().equals("El salario base debe estar entre 0 y 15,000,000"))
                 .verify();
     }
-
-    @Test
-    void findByIdentityDocument_success() {
-        when(userRepository.findByIdentityDocument("123456789")).thenReturn(Mono.just(validUser));
-
-        StepVerifier.create(userUseCase.findByIdentityDocument("123456789"))
-                .expectNext(validUser)
-                .verifyComplete();
-    }
-
-    @Test
-    void findByIdentityDocument_notFound() {
-        when(userRepository.findByIdentityDocument("999")).thenReturn(Mono.empty());
-
-        StepVerifier.create(userUseCase.findByIdentityDocument("999"))
-                .expectErrorMatches(e -> e instanceof IllegalArgumentException &&
-                        e.getMessage().equals("Usuario no encontrado"))
-                .verify();
-    }
 }
