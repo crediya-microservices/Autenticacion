@@ -46,3 +46,6 @@ adapters:
     schema: "public"
     username: "postgres"
     password: "postgres"
+jwt:
+  secret: "Aa5592770*1234567890abcdef12345678"
+  expiration-ms: 3600000
