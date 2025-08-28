@@ -16,7 +16,7 @@ import java.util.Objects;
 public class MyReactiveRepositoryAdapter extends ReactiveAdapterOperations<
         User,
         UserEntity,
-        String,
+        Long,
         MyReactiveRepository
         > implements UserRepository {
 
@@ -69,4 +69,12 @@ public class MyReactiveRepositoryAdapter extends ReactiveAdapterOperations<
                 .filter(Objects::nonNull)
                 .map(entity -> mapper.map(entity, User.class));
     }
+
+  @Override
+  public Mono<Boolean> existsByEmail(String email) {
+      return this.repository.existsByEmail(email)
+              .onErrorMap(e -> {
+                  return new RuntimeException("Error al verificar existencia de email", e);
+              });
+  }
 }

@@ -18,8 +18,7 @@ public class UserUseCase implements UserInputPort {
 
     public Mono<User> saveUser(User user) {
         return validateUser(user)
-                .then(userRepository.getUserByEmail(user.getEmail())
-                        .hasElement()
+                .then(userRepository.existsByEmail(user.getEmail())
                         .flatMap(emailExists -> {
                             if (emailExists) {
                                 return Mono.error(new IllegalStateException("El correo ya está registrado"));

@@ -25,12 +25,12 @@ public class Handler extends BaseHandler {
     public Mono<ServerResponse> listenSaveUser(ServerRequest serverRequest) {
         log.debug("Recibiendo petición para crear usuario");
 
-        return serverRequest.bodyToMono(CreateUserDTO.class)
-                .doOnNext(dto -> log.debug("Payload recibido: {}", dto))
-                .map(userDTOMapper::toModel)
-                .flatMap(userInputPort::saveUser)
-                .map(userDTOMapper::toResponse)
-                .flatMap(userResponse -> created("Usuario creado exitosamente", userResponse));
+            return serverRequest.bodyToMono(CreateUserDTO.class)
+                    .doOnNext(dto -> log.debug("Payload recibido: {}", dto))
+                    .map(userDTOMapper::toModel)
+                    .flatMap(userInputPort::saveUser)
+                    .map(userDTOMapper::toResponse)
+                    .flatMap(userResponse -> created("Usuario creado exitosamente", userResponse));
     }
 
     public Mono<ServerResponse> listenFindByEmail(ServerRequest serverRequest) {

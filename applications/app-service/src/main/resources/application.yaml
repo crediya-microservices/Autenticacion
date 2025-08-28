@@ -1,5 +1,5 @@
 server:
-  port: 8080
+  port: 8081
 spring:
   application:
     name: "Autenticacion"
@@ -28,6 +28,15 @@ routes:
   paths:
     users: "/api/v1/usuarios"
     userByEmail: "/api/v1/usuarios/{email}"
+
+#adapters:
+#  r2dbc:
+#    host: ${SPRING_R2DBC_HOST:solicitudes-db}
+#    port: ${SPRING_R2DBC_PORT:5432}
+#    database: ${SPRING_R2DBC_DATABASE:solicitudes}
+#    schema: ${SPRING_R2DBC_SCHEMA:public}
+#    username: ${SPRING_R2DBC_USERNAME:postgres}
+#    password: ${SPRING_R2DBC_PASSWORD:postgres}
 
 adapters:
   r2dbc:

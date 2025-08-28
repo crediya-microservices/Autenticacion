@@ -9,5 +9,5 @@ dependencies {
     implementation "org.springdoc:springdoc-openapi-starter-common:2.6.0"
     annotationProcessor "org.mapstruct:mapstruct-processor:$mapstructVersion"
     implementation "jakarta.validation:jakarta.validation-api:$jakartaValidationVersion"
-    implementation 'com.crediya:library:0.0.2'
+    implementation 'com.crediya:library:0.0.4'
 }

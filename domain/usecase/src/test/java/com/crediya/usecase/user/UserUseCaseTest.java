@@ -46,9 +46,11 @@ class UserUseCaseTest {
         userUseCase = new UserUseCase(userRepository, roleRepository);
     }
 
+    // ---------------- saveUser ------------------
+
     @Test
     void saveUser_emailAlreadyExists() {
-        when(userRepository.getUserByEmail(validUser.getEmail())).thenReturn(Mono.just(validUser));
+        when(userRepository.existsByEmail(validUser.getEmail())).thenReturn(Mono.just(true));
 
         StepVerifier.create(userUseCase.saveUser(validUser))
                 .expectErrorMatches(e -> e instanceof IllegalStateException &&
@@ -58,7 +60,7 @@ class UserUseCaseTest {
 
     @Test
     void saveUser_documentAlreadyExists() {
-        when(userRepository.getUserByEmail(validUser.getEmail())).thenReturn(Mono.empty());
+        when(userRepository.existsByEmail(validUser.getEmail())).thenReturn(Mono.just(false));
         when(userRepository.findByIdentityDocument(validUser.getIdentityDocument())).thenReturn(Mono.just(validUser));
 
         StepVerifier.create(userUseCase.saveUser(validUser))
@@ -69,7 +71,7 @@ class UserUseCaseTest {
 
     @Test
     void saveUser_roleNotFound() {
-        when(userRepository.getUserByEmail(validUser.getEmail())).thenReturn(Mono.empty());
+        when(userRepository.existsByEmail(validUser.getEmail())).thenReturn(Mono.just(false));
         when(userRepository.findByIdentityDocument(validUser.getIdentityDocument())).thenReturn(Mono.empty());
         when(roleRepository.getRoleByName(validUser.getRoleName())).thenReturn(Mono.empty());
 
@@ -82,10 +84,10 @@ class UserUseCaseTest {
     @Test
     void saveUser_success() {
         Role role = new Role();
-        role.setId(Long.valueOf("1"));
+        role.setId(1L);
         role.setName("ADMIN");
 
-        when(userRepository.getUserByEmail(validUser.getEmail())).thenReturn(Mono.empty());
+        when(userRepository.existsByEmail(validUser.getEmail())).thenReturn(Mono.just(false));
         when(userRepository.findByIdentityDocument(validUser.getIdentityDocument())).thenReturn(Mono.empty());
         when(roleRepository.getRoleByName(validUser.getRoleName())).thenReturn(Mono.just(role));
         when(userRepository.saveUser(validUser, role.getId())).thenReturn(Mono.just(validUser));
@@ -97,12 +99,14 @@ class UserUseCaseTest {
         verify(userRepository).saveUser(validUser, role.getId());
     }
 
+    // ---------------- validateUser ------------------
+
     @Test
     void saveUser_missingFields() {
         User invalidUser = new User(
-                "1", // falta el apellido
+                "1",
                 "Andres",
-                null,
+                null, // falta apellido
                 "andres@example.com",
                 LocalDate.now(),
                 "Calle 123",
@@ -111,7 +115,7 @@ class UserUseCaseTest {
                 "123",
                 "ADMIN"
         );
-        when(userRepository.getUserByEmail(anyString())).thenReturn(Mono.empty());
+        when(userRepository.existsByEmail(anyString())).thenReturn(Mono.just(false));
 
         StepVerifier.create(userUseCase.saveUser(invalidUser))
                 .expectErrorMatches(e -> e instanceof IllegalArgumentException &&
@@ -125,7 +129,7 @@ class UserUseCaseTest {
                 "1",
                 "Andres",
                 "Gomez",
-                "invalid-email",
+                "invalid-email", // mal formato
                 LocalDate.now(),
                 "Calle 123",
                 "123",
@@ -133,7 +137,8 @@ class UserUseCaseTest {
                 "123",
                 "ADMIN"
         );
-        when(userRepository.getUserByEmail(anyString())).thenReturn(Mono.empty());
+        when(userRepository.existsByEmail(anyString())).thenReturn(Mono.just(false));
+
         StepVerifier.create(userUseCase.saveUser(invalidUser))
                 .expectErrorMatches(e -> e instanceof IllegalArgumentException &&
                         e.getMessage().equals("El formato del correo electrónico no es válido"))
@@ -150,11 +155,11 @@ class UserUseCaseTest {
                 LocalDate.now(),
                 "Calle 123",
                 "123",
-                BigDecimal.valueOf(20_000_000), // mayor a 15M
+                BigDecimal.valueOf(20_000_000), // > 15M
                 "123",
                 "ADMIN"
         );
-        when(userRepository.getUserByEmail(anyString())).thenReturn(Mono.empty());
+        when(userRepository.existsByEmail(anyString())).thenReturn(Mono.just(false));
         StepVerifier.create(userUseCase.saveUser(invalidUser))
                 .expectErrorMatches(e -> e instanceof IllegalArgumentException &&
                         e.getMessage().equals("El salario base debe estar entre 0 y 15,000,000"))
@@ -175,10 +180,31 @@ class UserUseCaseTest {
                 "123",
                 "ADMIN"
         );
-        when(userRepository.getUserByEmail(anyString())).thenReturn(Mono.empty());
+        when(userRepository.existsByEmail(anyString())).thenReturn(Mono.just(false));
         StepVerifier.create(userUseCase.saveUser(invalidUser))
                 .expectErrorMatches(e -> e instanceof IllegalArgumentException &&
                         e.getMessage().equals("El salario base debe estar entre 0 y 15,000,000"))
+                .verify();
+    }
+
+    // ---------------- findByEmail ------------------
+
+    @Test
+    void findByEmail_success() {
+        when(userRepository.getUserByEmail(validUser.getEmail())).thenReturn(Mono.just(validUser));
+
+        StepVerifier.create(userUseCase.findByEmail(validUser.getEmail()))
+                .expectNext(validUser)
+                .verifyComplete();
+    }
+
+    @Test
+    void findByEmail_userNotFound() {
+        when(userRepository.getUserByEmail(validUser.getEmail())).thenReturn(Mono.empty());
+
+        StepVerifier.create(userUseCase.findByEmail(validUser.getEmail()))
+                .expectErrorMatches(e -> e instanceof IllegalArgumentException &&
+                        e.getMessage().equals("Usuario no encontrado"))
                 .verify();
     }
 }

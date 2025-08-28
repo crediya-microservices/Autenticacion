@@ -17,7 +17,8 @@ CREATE TABLE users
     born_date    DATE,
     address      VARCHAR(255),
     phone_number VARCHAR(20),
-    base_salary  NUMERIC(15, 2) identity_document VARCHAR(50) UNIQUE NOT NULL,
+    base_salary  NUMERIC(15, 2),
+    identity_document VARCHAR(50) UNIQUE NOT NULL,
     idrol        INTEGER REFERENCES roles (id)
 );
 
