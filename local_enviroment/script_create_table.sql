@@ -26,3 +26,38 @@ INSERT INTO roles (name, description)
 VALUES ('Admin', 'Administrator with full access'),
        ('User', 'Regular user with limited access'),
        ('adviser', 'adviser user with limited access');
+
+--------------------------------------//////////////////////////////////////////////////--------------------------------
+CREATE TABLE permisos
+(
+    id          SERIAL PRIMARY KEY,
+    name        VARCHAR(50) UNIQUE NOT NULL,
+    description TEXT
+);
+
+INSERT INTO permisos (name, description)
+VALUES ('CREATE_USER', 'Creaste access'),
+       ('CREATE_LOAN_APPLICATION', 'Create loan applications'),
+         ('READ_LOAN_APPLICATION', 'Read loan applications'),
+         ('CHANGE_LOAN_APPLICATION', 'Approve or decline loan applications');
+
+CREATE TABLE role_permisos (
+    role_id INTEGER REFERENCES roles(id),
+    permiso_id INTEGER REFERENCES permisos(id),
+    PRIMARY KEY (role_id, permiso_id)
+);
+
+-- Admin y adviser tienen todos los permisos
+INSERT INTO role_permisos (role_id, permiso_id)
+SELECT r.id, p.id
+FROM roles r, permisos p
+WHERE r.name IN ('Admin', 'adviser');
+
+-- User solo tiene CREATE_LOAN_APPLICATION
+INSERT INTO role_permisos (role_id, permiso_id)
+SELECT r.id, p.id
+FROM roles r, permisos p
+WHERE r.name = 'User' AND p.name = 'CREATE_LOAN_APPLICATION';
+
+ALTER TABLE users
+    ADD COLUMN password_hash TEXT;

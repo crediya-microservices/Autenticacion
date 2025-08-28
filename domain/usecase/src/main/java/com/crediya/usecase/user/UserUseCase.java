@@ -3,6 +3,7 @@ package com.crediya.usecase.user;
 
 import com.crediya.model.role.gateways.RoleRepository;
 import com.crediya.model.user.User;
+import com.crediya.model.user.gateways.PasswordEncoderInputPort;
 import com.crediya.model.user.gateways.UserInputPort;
 import com.crediya.model.user.gateways.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +16,7 @@ public class UserUseCase implements UserInputPort {
 
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
+    private final PasswordEncoderInputPort passwordEncoderInputPort;
 
     public Mono<User> saveUser(User user) {
         return validateUser(user)
@@ -33,6 +35,7 @@ public class UserUseCase implements UserInputPort {
                                                 .switchIfEmpty(Mono.error(new IllegalArgumentException("El rol no existe")))
                                                 .flatMap(role -> {
                                                     user.setRoleName(role.getName());
+                                                    user.setPassword(passwordEncoderInputPort.encode(user.getPassword()));
                                                     return userRepository.saveUser(user, role.getId());
                                                 });
                                     });
