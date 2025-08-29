@@ -1,8 +1,10 @@
-package com.crediya.api.utils;
+package com.crediya.api.security;
 
 import com.crediya.model.user.gateways.PasswordEncoderInputPort;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.stereotype.Component;
 
+@Component
 public class BcryptPasswordEncoderAdapter implements PasswordEncoderInputPort {
     private final BCryptPasswordEncoder delegate = new BCryptPasswordEncoder();
 

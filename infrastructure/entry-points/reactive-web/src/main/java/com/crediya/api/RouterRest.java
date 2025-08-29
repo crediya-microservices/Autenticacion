@@ -3,7 +3,6 @@ package com.crediya.api;
 import com.crediya.api.config.UserPath;
 import com.crediya.api.dto.CreateUserDTO;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
@@ -85,6 +84,7 @@ public class RouterRest {
     })
     public RouterFunction<ServerResponse> routerFunction() {
         return route(POST(userPath.getUsers()), userHandler::listenSaveUser)
-                .andRoute(GET(userPath.getUserByEmail()), userHandler::listenFindByEmail);
+                .andRoute(GET(userPath.getUserByEmail()), userHandler::listenFindByEmail)
+                .andRoute(POST(userPath.getAuthenticate()), userHandler::listenAuthenticate);
     }
 }

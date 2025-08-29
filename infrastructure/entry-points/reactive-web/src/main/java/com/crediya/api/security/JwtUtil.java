@@ -1,4 +1,4 @@
-package com.crediya.api.utils;
+package com.crediya.api.security;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
@@ -53,5 +53,12 @@ public class JwtUtil {
     public String getUsername(String token) {
         return getClaims(token).getSubject();
     }
+
+
+    @SuppressWarnings("unchecked")
+    public String getRole(String token) {
+        return getClaims(token).get("role").toString();
+    }
+
 
 }

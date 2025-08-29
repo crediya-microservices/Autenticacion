@@ -34,7 +34,7 @@ public class User {
         this.roleName = roleName;
     }
 
-    public Long getId() {
+    public String getId() {
         return id;
     }
 

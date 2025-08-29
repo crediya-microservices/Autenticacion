@@ -58,7 +58,7 @@ public class AuthUseCase implements AuthInputPort {
     }
 
     private Mono<String> loadPermissionsAndGenerateToken(User user) {
-        return permissionRepository.findByIdUser(user.getId())
+        return permissionRepository.findByIdUser(Long.valueOf(user.getId()))
                 .map(Permission::getName)
                 .collectList()
                 .doOnNext(perms -> logger.info("Permisos obtenidos para " + user.getEmail() + ": " + perms))
