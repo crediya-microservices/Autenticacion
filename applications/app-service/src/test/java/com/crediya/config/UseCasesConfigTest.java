@@ -1,6 +1,8 @@
 package com.crediya.config;
 
 import com.crediya.model.role.gateways.RoleRepository;
+import com.crediya.model.user.gateways.PasswordEncoderInputPort;
+import com.crediya.model.user.gateways.TokenInputPort;
 import com.crediya.usecase.user.UserUseCase;
 import com.crediya.model.user.gateways.UserRepository;
 import org.junit.jupiter.api.Test;
@@ -48,10 +50,24 @@ class UseCasesConfigTest {
             return Mockito.mock(RoleRepository.class);
         }
 
+        @Bean
+        public PasswordEncoderInputPort passwordEncoderInputPort() {
+            return Mockito.mock(PasswordEncoderInputPort.class);
+        }
 
         @Bean
-        public UserUseCase userUseCase(UserRepository userRepository, RoleRepository roleRepository) {
-            return new UserUseCase(userRepository, roleRepository);
+        public TokenInputPort tokenInputPort() {
+            return Mockito.mock(TokenInputPort.class);
+        }
+
+        @Bean
+        public UserUseCase userUseCase(UserRepository userRepository, RoleRepository roleRepository, PasswordEncoderInputPort passwordEncoderInputPort) {
+            return new UserUseCase(userRepository, roleRepository, passwordEncoderInputPort);
+        }
+
+        @Bean
+        public com.crediya.model.permission.gateways.PermissionRepository permissionRepository() {
+            return Mockito.mock(com.crediya.model.permission.gateways.PermissionRepository.class);
         }
     }
 }

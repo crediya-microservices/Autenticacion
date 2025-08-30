@@ -3,6 +3,7 @@ package com.crediya.usecase.user;
 import com.crediya.model.role.Role;
 import com.crediya.model.role.gateways.RoleRepository;
 import com.crediya.model.user.User;
+import com.crediya.model.user.gateways.PasswordEncoderInputPort;
 import com.crediya.model.user.gateways.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -28,6 +29,8 @@ class UserUseCaseTest {
 
     private UserUseCase userUseCase;
 
+    private PasswordEncoderInputPort passwordEncoderInputPort;
+
     private final User validUser = new User(
             "1",
             "Andres",
@@ -43,10 +46,13 @@ class UserUseCaseTest {
 
     @BeforeEach
     void setUp() {
-        userUseCase = new UserUseCase(userRepository, roleRepository);
+        userRepository = mock(UserRepository.class);
+        roleRepository = mock(RoleRepository.class);
+        passwordEncoderInputPort = mock(PasswordEncoderInputPort.class);
+
+        userUseCase = new UserUseCase(userRepository, roleRepository, passwordEncoderInputPort);
     }
 
-    // ---------------- saveUser ------------------
 
     @Test
     void saveUser_emailAlreadyExists() {
@@ -99,14 +105,13 @@ class UserUseCaseTest {
         verify(userRepository).saveUser(validUser, role.getId());
     }
 
-    // ---------------- validateUser ------------------
 
     @Test
     void saveUser_missingFields() {
         User invalidUser = new User(
                 "1",
                 "Andres",
-                null, // falta apellido
+                null,
                 "andres@example.com",
                 LocalDate.now(),
                 "Calle 123",
@@ -129,7 +134,7 @@ class UserUseCaseTest {
                 "1",
                 "Andres",
                 "Gomez",
-                "invalid-email", // mal formato
+                "invalid-email",
                 LocalDate.now(),
                 "Calle 123",
                 "123",
@@ -155,7 +160,7 @@ class UserUseCaseTest {
                 LocalDate.now(),
                 "Calle 123",
                 "123",
-                BigDecimal.valueOf(20_000_000), // > 15M
+                BigDecimal.valueOf(20_000_000),
                 "123",
                 "ADMIN"
         );
@@ -176,7 +181,7 @@ class UserUseCaseTest {
                 LocalDate.now(),
                 "Calle 123",
                 "123",
-                BigDecimal.valueOf(-500), // negativo
+                BigDecimal.valueOf(-500),
                 "123",
                 "ADMIN"
         );
@@ -187,7 +192,6 @@ class UserUseCaseTest {
                 .verify();
     }
 
-    // ---------------- findByEmail ------------------
 
     @Test
     void findByEmail_success() {
@@ -207,4 +211,5 @@ class UserUseCaseTest {
                         e.getMessage().equals("Usuario no encontrado"))
                 .verify();
     }
+
 }
