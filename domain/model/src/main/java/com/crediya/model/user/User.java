@@ -14,6 +14,7 @@ public class User {
     private BigDecimal baseSalary;
     private String identityDocument;
     private String roleName;
+    private String password;
 
     public User() {
     }
@@ -111,5 +112,13 @@ public class User {
 
     public void setRoleName(String roleName) {
         this.roleName = roleName;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 }

@@ -40,4 +40,7 @@ public class UserEntity {
 
     @Column("idrol")
     private Long roleId;
+
+    @Column("password_hash")
+    private String password;
 }

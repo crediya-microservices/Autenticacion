@@ -28,6 +28,7 @@ routes:
   paths:
     users: "/api/v1/usuarios"
     userByEmail: "/api/v1/usuarios/{email}"
+    authenticate: "/api/v1/login"
 
 #adapters:
 #  r2dbc:
@@ -46,3 +47,6 @@ adapters:
     schema: "public"
     username: "postgres"
     password: "postgres"
+jwt:
+  secret: "Aa5592770*1234567890abcdef12345678"
+  expiration-ms: 3600000

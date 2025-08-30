@@ -1,8 +1,10 @@
 
 package com.crediya.api;
 
+import com.crediya.api.dto.AuthDTO;
 import com.crediya.api.dto.CreateUserDTO;
 import com.crediya.api.mapper.UserDTOMapper;
+import com.crediya.api.service.AuthService;
 import com.crediya.library.api.BaseHandler;
 import com.crediya.model.user.gateways.UserInputPort;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +23,7 @@ public class Handler extends BaseHandler {
 
     private final UserInputPort userInputPort;
     private final UserDTOMapper userDTOMapper;
+    private final AuthService authService;
 
     public Mono<ServerResponse> listenSaveUser(ServerRequest serverRequest) {
         log.debug("Recibiendo petición para crear usuario");
@@ -40,5 +43,14 @@ public class Handler extends BaseHandler {
         return userInputPort.findByEmail(email)
                 .map(userDTOMapper::toResponse)
                 .flatMap(userResponse -> ok("Usuario encontrado exitosamente", userResponse));
+    }
+
+    public Mono<ServerResponse> listenAuthenticate(ServerRequest serverRequest) {
+        log.debug("Recibiendo petición para autenticación de usuario");
+        return serverRequest.bodyToMono(AuthDTO.class)
+                .doOnNext(dto -> log.debug("Payload recibido para autenticación: {}", dto))
+                .flatMap(dto -> authService.authenticate(dto.email(), dto.password()))
+                .flatMap(token -> ok("Autenticación exitosa", token))
+                .switchIfEmpty(ServerResponse.notFound().build());
     }
 }
