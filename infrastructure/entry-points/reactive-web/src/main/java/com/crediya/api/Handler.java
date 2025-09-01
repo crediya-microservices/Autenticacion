@@ -3,6 +3,7 @@ package com.crediya.api;
 
 import com.crediya.api.dto.AuthDTO;
 import com.crediya.api.dto.CreateUserDTO;
+import com.crediya.api.dto.IdentitiesRequestDTO;
 import com.crediya.api.mapper.UserDTOMapper;
 import com.crediya.api.service.AuthService;
 import com.crediya.library.api.BaseHandler;
@@ -12,7 +13,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+
+import java.util.List;
 
 import static org.springframework.http.ResponseEntity.notFound;
 
@@ -28,12 +32,12 @@ public class Handler extends BaseHandler {
     public Mono<ServerResponse> listenSaveUser(ServerRequest serverRequest) {
         log.debug("Recibiendo petición para crear usuario");
 
-            return serverRequest.bodyToMono(CreateUserDTO.class)
-                    .doOnNext(dto -> log.debug("Payload recibido: {}", dto))
-                    .map(userDTOMapper::toModel)
-                    .flatMap(userInputPort::saveUser)
-                    .map(userDTOMapper::toResponse)
-                    .flatMap(userResponse -> created("Usuario creado exitosamente", userResponse));
+        return serverRequest.bodyToMono(CreateUserDTO.class)
+                .doOnNext(dto -> log.debug("Payload recibido: {}", dto))
+                .map(userDTOMapper::toModel)
+                .flatMap(userInputPort::saveUser)
+                .map(userDTOMapper::toResponse)
+                .flatMap(userResponse -> created("Usuario creado exitosamente", userResponse));
     }
 
     public Mono<ServerResponse> listenFindByEmail(ServerRequest serverRequest) {
@@ -53,4 +57,16 @@ public class Handler extends BaseHandler {
                 .flatMap(token -> ok("Autenticación exitosa", token))
                 .switchIfEmpty(ServerResponse.notFound().build());
     }
+
+    public Mono<ServerResponse> listenFindUsersByIdentityDocument(ServerRequest serverRequest) {
+        log.debug("Recibiendo petición para buscar usuarios por documentos de identidad: {}", serverRequest);
+        return serverRequest.bodyToFlux(IdentitiesRequestDTO.class)
+                .doOnNext(dto -> log.debug("Payload recibido para búsqueda de usuarios: {}", dto))
+                .filter(dto -> dto.identities() != null && !dto.identities().isEmpty())
+                .flatMap(dto -> userInputPort.findUsersByIdentityDocument(dto.identities()))
+                .map(userDTOMapper::toResponse)
+                .collectList()
+                .flatMap(userResponses -> ok("Usuarios encontrados exitosamente", userResponses));
+    }
+
 }

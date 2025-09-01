@@ -10,6 +10,7 @@ import org.springframework.transaction.reactive.TransactionalOperator;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.List;
 import java.util.Objects;
 
 @Repository
@@ -77,4 +78,12 @@ public class MyReactiveRepositoryAdapter extends ReactiveAdapterOperations<
                   return new RuntimeException("Error al verificar existencia de email", e);
               });
   }
+
+    @Override
+    public Flux<User> findUsersByIdentityDocument(List<String> identities) {
+        return this.repository.findUsersByIdentityDocument(identities)
+                .filter(Objects::nonNull)
+                .map(entity -> mapper.map(entity, User.class))
+                .onErrorMap(e -> new RuntimeException("Error al consultar usuarios por documentos de identidad", e));
+    }
 }

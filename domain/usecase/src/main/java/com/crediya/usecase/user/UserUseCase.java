@@ -7,9 +7,11 @@ import com.crediya.model.user.gateways.PasswordEncoderInputPort;
 import com.crediya.model.user.gateways.UserInputPort;
 import com.crediya.model.user.gateways.UserRepository;
 import lombok.RequiredArgsConstructor;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @RequiredArgsConstructor
 public class UserUseCase implements UserInputPort {
@@ -47,6 +49,12 @@ public class UserUseCase implements UserInputPort {
     public Mono<User> findByEmail(String email) {
         return userRepository.getUserByEmail(email)
                 .switchIfEmpty(Mono.error(new IllegalArgumentException("Usuario no encontrado")));
+    }
+
+    @Override
+    public Flux<User> findUsersByIdentityDocument(List<String> identities) {
+        return userRepository.findUsersByIdentityDocument(identities)
+                .switchIfEmpty(Flux.error(new IllegalArgumentException("No se encontraron usuarios con los documentos proporcionados")));
     }
 
     private Mono<Void> validateUser(User user) {

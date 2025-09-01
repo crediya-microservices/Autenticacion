@@ -29,6 +29,7 @@ routes:
     users: "/api/v1/usuarios"
     userByEmail: "/api/v1/usuarios/{email}"
     authenticate: "/api/v1/login"
+    usersByIdentificationNumbers: "/api/v1/usuarios/identification-numbers"
 
 #adapters:
 #  r2dbc:
