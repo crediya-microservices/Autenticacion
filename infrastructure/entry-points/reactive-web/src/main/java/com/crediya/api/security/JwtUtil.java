@@ -6,7 +6,6 @@ import org.springframework.stereotype.Component;
 
 import java.security.Key;
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
 
 import org.springframework.core.env.Environment;
@@ -23,12 +22,11 @@ public class JwtUtil {
         this.key = Keys.hmacShaKeyFor(secret.getBytes());
     }
 
-    public String generateToken(String subject, String role, List<String> permissions) {
+    public String generateToken(String subject, String role) {
         long now = System.currentTimeMillis();
         return Jwts.builder()
                 .setSubject(subject)
                 .setClaims(Map.of(
-                        "permissions", permissions,
                         "role", role
                 ))
                 .setIssuedAt(new Date(now))
@@ -37,17 +35,17 @@ public class JwtUtil {
                 .compact();
     }
 
-    public boolean validateToken(String token) {
-        try {
-            Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
-            return true;
-        } catch (JwtException | IllegalArgumentException ex) {
-            return false;
-        }
-    }
-
     public Claims getClaims(String token) {
         return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
+    }
+
+    public boolean isTokenInvalid(String token) {
+        try {
+            Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
+            return false;
+        } catch (JwtException | IllegalArgumentException ex) {
+            return true;
+        }
     }
 
     public String getUsername(String token) {
