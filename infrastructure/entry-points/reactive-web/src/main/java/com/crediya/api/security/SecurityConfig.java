@@ -13,9 +13,9 @@ import org.springframework.security.web.server.authentication.AuthenticationWebF
 @Configuration
 @EnableWebFluxSecurity
 public class SecurityConfig {
-    private final static String ADMIN = "Admin";
-    private final static String ADVISER = "adviser";
-    private final static String USER = "User";
+    private static final String ADMIN = "Admin";
+    private static final String ADVISER = "Adviser";
+    private static final String USER = "User";
     private final JwtUtil jwtUtil;
 
     public SecurityConfig(JwtUtil jwtUtil) {
