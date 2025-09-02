@@ -4,8 +4,6 @@ import com.crediya.api.security.JwtUtil;
 import com.crediya.model.user.gateways.TokenInputPort;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-
 @Component
 public class JwtTokenAdapter implements TokenInputPort {
 
