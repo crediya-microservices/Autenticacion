@@ -22,13 +22,13 @@ public class UserUseCase implements UserInputPort {
         return validateUser(user)
                 .then(userRepository.existsByEmail(user.getEmail())
                         .flatMap(emailExists -> {
-                            if (emailExists) {
+                            if (Boolean.TRUE.equals(emailExists)) {
                                 return Mono.error(new IllegalStateException("El correo ya está registrado"));
                             }
                             return userRepository.findByIdentityDocument(user.getIdentityDocument())
                                     .hasElement()
                                     .flatMap(docExists -> {
-                                        if (docExists) {
+                                        if (Boolean.TRUE.equals(docExists)) {
                                             return Mono.error(new IllegalStateException("El documento de identidad ya está registrado"));
                                         }
                                         return roleRepository.getRoleByName(user.getRoleName())
