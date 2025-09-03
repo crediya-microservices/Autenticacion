@@ -1,3 +1,4 @@
+# Usar una imagen base ligera de OpenJDK 21
 FROM eclipse-temurin:21-jdk-alpine
 
 # Crear un usuario no-root llamado appuser
