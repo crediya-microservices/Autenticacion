@@ -19,13 +19,17 @@ CREATE TABLE users
     phone_number VARCHAR(20),
     base_salary  NUMERIC(15, 2),
     identity_document VARCHAR(50) UNIQUE NOT NULL,
+    password_hash TEXT NOT NULL,
     idrol        INTEGER REFERENCES roles (id)
 );
-
 INSERT INTO roles (name, description)
 VALUES ('Admin', 'Administrator with full access'),
        ('User', 'Regular user with limited access'),
        ('adviser', 'adviser user with limited access');
+
+INSERT INTO users(name, last_name, email, identity_document, password_hash, idrol)
+VALUES ('admin', 'admin', 'admin@admin.co','123456789','$2a$10$zw0UH7NmCcVZKNPZsfGtp..oLBAPmq/aLp5XBpJqe5Z/2nvQYIwFa',1);
+
 
 --------------------------------------//////////////////////////////////////////////////--------------------------------
 CREATE TABLE permisos
@@ -58,6 +62,3 @@ INSERT INTO role_permisos (role_id, permiso_id)
 SELECT r.id, p.id
 FROM roles r, permisos p
 WHERE r.name = 'User' AND p.name = 'CREATE_LOAN_APPLICATION';
-
-ALTER TABLE users
-    ADD COLUMN password_hash TEXT;
