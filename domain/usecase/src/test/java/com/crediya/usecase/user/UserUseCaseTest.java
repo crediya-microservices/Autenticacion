@@ -10,11 +10,13 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 
 import static org.mockito.Mockito.*;
 
@@ -209,6 +211,25 @@ class UserUseCaseTest {
         StepVerifier.create(userUseCase.findByEmail(validUser.getEmail()))
                 .expectErrorMatches(e -> e instanceof IllegalArgumentException &&
                         e.getMessage().equals("Usuario no encontrado"))
+                .verify();
+    }
+
+    @Test
+    void findUsersByIdentityDocument_success() {
+        when(userRepository.findUsersByIdentityDocument(List.of("123456789"))).thenReturn(Flux.just(validUser));
+
+        StepVerifier.create(userUseCase.findUsersByIdentityDocument(List.of("123456789")))
+                .expectNext(validUser)
+                .verifyComplete();
+    }
+
+    @Test
+    void findUsersByIdentityDocument_notFound() {
+        when(userRepository.findUsersByIdentityDocument(List.of("123456789"))).thenReturn(Flux.empty());
+
+        StepVerifier.create(userUseCase.findUsersByIdentityDocument(List.of("123456789")))
+                .expectErrorMatches(e -> e instanceof IllegalArgumentException &&
+                        e.getMessage().equals("No se encontraron usuarios con los documentos proporcionados"))
                 .verify();
     }
 
